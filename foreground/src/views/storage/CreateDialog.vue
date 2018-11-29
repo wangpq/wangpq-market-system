@@ -1,0 +1,283 @@
+<template>
+  <div>
+    <Modal id="CreateDialog"
+      v-model="initOption.visible"
+      :mask-closable="false"
+      width=980>
+
+      <div slot="header" class="dialog-header">
+        <Icon type="information-circled"></Icon>
+        <span>{{initOption.title}}</span>
+      </div>
+      <div class="detail-page">
+        <TableForm
+          ref="createTableForm"
+          :url="apis.orderManage.orderDetail"
+          :ajaxParams="ajaxParams"
+          method="post"
+          :columns="columns"
+          :form="dialogForm"
+        >
+          <template slot="form">
+            <FormItem label="订货单号：">
+              <Input class="Input" disabled v-model="dialogForm.callNo"/>
+            </FormItem>
+            <FormItem label="订货门店：">
+              <Input class="Input" disabled v-model="dialogForm.chainName"/>
+            </FormItem>
+            <FormItem label="订货人：">
+              <Input class="Input" disabled v-model="dialogForm.applyName"/>
+            </FormItem>
+            <FormItem label="审核人：">
+              <Input class="Input" disabled v-model="dialogForm.checkedName"/>
+            </FormItem>
+            <FormItem label="到货日期：">
+              <Input class="Input" disabled v-model="dialogForm.arriveTime"/>
+            </FormItem>
+            <FormItem label="订货时间：">
+              <Input class="Input" disabled v-model="dialogForm.createTime"/>
+            </FormItem>
+            <FormItem label="审核时间：">
+              <Input class="Input" disabled v-model="dialogForm.verifyDate"/>
+            </FormItem>
+            <FormItem label="审核状态：">
+              <Input class="Input" disabled v-model="dialogForm.auditStatus"/>
+            </FormItem>
+            <FormItem label="出库状态：">
+              <Input class="Input" disabled v-model="dialogForm.outStatus"/>
+            </FormItem>
+            <FormItem label="出库单号：">
+              <Input class="Input" disabled v-model="dialogForm.no"/>
+            </FormItem>
+          </template>
+        </TableForm>
+        <NoteBook
+          :noteList="noteList"
+          :hasList="noteHasList"
+          :hasTextarea="noteHasTextarea"
+        >
+        </NoteBook>
+      </div>
+
+      <div slot="footer">
+        <div class="btn-group" style="text-align:center;">
+          <Button type="default" @click="initOption.visible=false">取消</Button>
+          <Button type="primary" @click="onBtnOutTap">确认出库</Button>
+          <Button type="info" @click="onBtnDownloadTap">下载</Button>
+          <Button type="info" @click="onBtnPrintTap">打印出库单</Button>
+        </div>
+      </div>
+    </Modal>
+  </div>
+</template>
+<script>
+  import $http from '@/utils/httputils'
+  import TableForm from '@/components/common/TableForm'
+  import NoteBook from '@/components/common/NoteBook'
+
+  export default {
+    components: {
+      TableForm,
+      NoteBook
+    },
+    props: {
+      initOption: {
+        title: {
+          type: String,
+          default: '新增商品分类'
+        },
+        action: {
+          type: String,
+          default: 'add'
+        },
+        visible: {
+          type: Boolean
+        },
+        id: {
+          type: String,
+          default: null
+        }
+      }
+    },
+    data () {
+      return {
+        // 留言列表数组
+        noteList : [],
+        noteHasList : true,
+        noteHasTextarea : false,
+
+        ajaxParams : {},
+        //表格 columns
+        columns:[
+          {
+            title: '序号',
+            type: 'index',
+            minWidth:60,
+            align: 'center'
+          },
+          {
+            title: '条码',
+            key: 'productNo',
+            minWidth:160,
+            align: 'center'
+          },
+          {
+            title: '商品',
+            key: 'productName',
+            minWidth:160,
+            align: 'center'
+          },
+          {
+            title: '单位',
+            key: 'unit',
+            minWidth:80,
+            align: 'center'
+          },
+          {
+            title: '数量',
+            key: 'number',
+            minWidth:80,
+            align: 'center'
+          },
+          {
+            title: '规格',
+            key: 'specification',
+            minWidth:80,
+            align: 'center'
+          },
+          {
+            title: '配送价',
+            key: 'price',
+            minWidth:100,
+            align: 'center',
+            sortable:true
+          }
+          /*
+          ,
+          {
+            title: '当前出库数量',
+            key: 'xxxx',
+            minWidth:140,
+            align: 'center',
+            sortable:true
+          },
+          {
+            title: '剩余库存',
+            key: 'xxxx',
+            minWidth:120,
+            align: 'center',
+            sortable:true
+          }
+          */
+        ],
+
+        dialogForm: {
+        }
+      }
+    },
+
+    methods: {
+      formatStatus(status){
+        switch (status) {
+          case 0:
+            return '初始化';
+            break;
+          case 1:
+            return '待审核';
+            break;
+          case 2:
+            return '已审核';
+          case 3:
+            return '驳回';
+          case 4:
+            return '待出库';
+          case 5:
+            return '待配送';
+          case 6:
+            return '配送中';
+          case 7:
+            return '已入库';
+          default:
+            return '初始化';
+        }
+      },
+      init () {
+        // 初始化表单
+        let formData=this.initOption.row;
+        formData.auditStatus=this.formatStatus(this.initOption.row.auditStatus);
+        this.dialogForm=formData;
+        // 处理返回的字符串为数组
+        try{
+          let tempArr=this.dialogForm.remark.replace(/\n/g,'--').split("--");
+          if(tempArr[tempArr.length-1]==""){
+            tempArr=tempArr.slice(0,-1);
+          }
+          this.noteList=tempArr;
+        }catch(error){}
+        // 初始化表格ajax参数
+        this.ajaxParams.callNo=this.initOption.row.callNo;
+        this.ajaxParams.limit=10;
+        this.ajaxParams.pageIndex=1;
+        this.$refs.createTableForm.loadData();
+      },
+      handleResult (obj) {
+        if (obj.success) {
+          this.$Notice.success({
+            title: '提示',
+            desc: '保存成功！'
+          })
+          this.$parent.$children[0].query()
+          this.$parent.dialogFormInitOption.visible = false
+        } else {
+          this.$Notice.error({
+            title: '提示',
+            desc: obj.message
+          })
+        }
+      },
+      onBtnOutTap(){
+        $http({
+          path: this.apis.storageManage.confirm,
+          method: 'get',
+          data: {
+            outNo : this.dialogForm.no
+          }
+        }).then(response => {
+          let res = response.data
+          if (res.success) {
+            this.$Notice.success({
+              title: '提示',
+              desc: "成功生成出库单！"
+            })
+            this.$parent.$children[0].query();
+            this.initOption.visible=false;
+          } else {
+            this.$Notice.error({
+              title: '提示',
+              desc: res.message
+            })
+          }
+        })
+      },
+      onBtnDownloadTap(){
+        alert("onBtnDownloadTap");
+      },
+      onBtnPrintTap(){
+        alert("onBtnPrintTap");
+      },
+      onSelectRange(e) {
+        this.dialogForm.arriveTime  = e + " 00:00:00"
+      }
+
+
+    }
+  }
+</script>
+<style>
+.dialog-header{
+  color:#f60;
+  text-align:center;
+  font-size:14px;
+  font-weight:bold;
+}
+</style>
