@@ -20,14 +20,14 @@
                 </FormItem>
                 <FormItem label="菜单类型" prop="type">
                     <Select v-model="menuForm.type" clearable>
-                        <Option v-for="item in apis.dictVal.menuType" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.menuType)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
                 </FormItem>
                 <FormItem label="使用范围" prop="useType">
                     <Select v-model="menuForm.useType" clearable>
-                        <Option v-for="item in apis.dictVal.menuUseType" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.menuUseType)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>

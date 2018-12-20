@@ -77,25 +77,25 @@
        */
       setDict () {
         //门店类型
-        this.getDict('shop_type', 'shopType')
+        this.getDict('shop_type')
         //角色使用类型
-        this.getDict('role_use_type', 'roleUseType')
+        this.getDict('role_use_type')
         //菜单类型
-        this.getDict('menu_type', 'menuType')
+        this.getDict('menu_type')
         //菜单使用类型
-        this.getDict('menu_use_type', 'menuUseType')
+        this.getDict('menu_use_type')
         //供应商经营方式
-        this.getDict('supplier_business_way', 'supplierBusinessWay')
+        this.getDict('supplier_business_way')
         //审核状态
-        this.getDict('checked_status', 'checkedStatus');
+        this.getDict('checked_status');
         //商品上下架
-        this.getDict('putaway_status', 'putawayStatus')
+        this.getDict('putaway_status')
         //支付方式
-        this.getDict('pay_way', 'payWay')
+        this.getDict('pay_way')
         //支付状态
-        this.getDict('pay_status', 'payStatus')
+        this.getDict('pay_status')
         //订单类型
-        this.getDict('order_type', 'orderType')
+        this.getDict('order_type')
       },
     },
     mounted () {

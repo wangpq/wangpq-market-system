@@ -35,18 +35,9 @@
     },
     mounted () {
       this.$nextTick(() => {
-        // this.getSelectList()
       });
     },
     methods: {
-      getSelectList () {
-        alert(this.value)
-        var $this  =this;
-        this.getDictCall(this.code, function (arr) {
-          $this.selectList = arr
-          console.log(arr)
-        })
-      },
 
       setCurrentValue (val) {
         this.currentValue = val

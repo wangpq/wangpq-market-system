@@ -44,7 +44,7 @@
 
           <Form-item label="审核状态：" :label-width="80" prop="checkedStatus">
               <Select class="checkedStatus" v-model="searchForm.checkedStatus" clearable>
-                  <Option v-for="item in apis.dictVal.checkedStatus" :value="item.value" :key="item.value">
+                  <Option v-for="item in getDict(apis.dictType.checkedStatus)" :value="item.value" :key="item.value">
                       {{item.label }}
                   </Option>
               </Select>

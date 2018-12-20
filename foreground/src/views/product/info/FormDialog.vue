@@ -51,7 +51,7 @@
                 </FormItem>
                 <FormItem label="是否允许折扣" prop="orDiscount">
                     <Select v-model="productForm.orDiscount" clearable>
-                        <Option v-for="item in apis.dictVal.orDiscount" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.orDiscount)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
@@ -59,7 +59,7 @@
                 <!--<Input  v-model="productForm.orDiscount"></Input></FormItem>-->
                 <!--<FormItem label="物流模式" prop="logisticsModel">-->
                     <!--<Select v-model="productForm.logisticsModel" clearable>-->
-                        <!--<Option v-for="item in apis.dictVal.logisticsModel" :value="item.value" :key="item.value">-->
+                        <!--<Option v-for="item in getDict(apis.dictType.logisticsModel)" :value="item.value" :key="item.value">-->
                             <!--{{item.label }}-->
                         <!--</Option>-->
                     <!--</Select>-->
@@ -73,7 +73,7 @@
                 <!--</FormItem>-->
                 <FormItem label="经营方式" prop="businessWay">
                     <Select v-model="productForm.businessWay" clearable>
-                        <Option v-for="item in apis.dictVal.businessWay" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.businessWay)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
@@ -81,7 +81,7 @@
                 <!--<Input  v-model="productForm.businessWay"></Input></FormItem>-->
                 <FormItem label="是否维护库存" prop="orMaintainStock">
                     <Select v-model="productForm.orMaintainStock" clearable>
-                        <Option v-for="item in apis.dictVal.orMaintainStock" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.orMaintainStock)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
@@ -92,7 +92,7 @@
                 </FormItem>
                 <FormItem label="计价方式" prop="priceWay">
                     <Select v-model="productForm.priceWay" clearable>
-                        <Option v-for="item in apis.dictVal.priceWay" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.priceWay)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
@@ -115,7 +115,7 @@
                 <!--</FormItem>-->
                 <!--<FormItem label="上架状态" prop="putawayStatus">-->
                 <!--<Select v-model="productForm.putawayStatus" clearable>-->
-                <!--<Option v-for="item in apis.dictVal.putawayStatus" :value="item.value" :key="item.value">-->
+                <!--<Option v-for="item in getDict(apis.dictType.putawayStatus)" :value="item.value" :key="item.value">-->
                 <!--{{item.label }}-->
                 <!--</Option>-->
                 <!--</Select>-->
@@ -132,7 +132,7 @@
                 </FormItem>
                 <!--<FormItem label="审核状态" prop="checkedStatus">-->
                 <!--<Select v-model="productForm.checkedStatus" clearable>-->
-                <!--<Option v-for="item in apis.dictVal.checkedStatus" :value="item.value" :key="item.value">-->
+                <!--<Option v-for="item in getDict(apis.dictType.checkedStatus)" :value="item.value" :key="item.value">-->
                 <!--{{item.label }}-->
                 <!--</Option>-->
                 <!--</Select>-->

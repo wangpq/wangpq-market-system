@@ -12,7 +12,7 @@
                     </Form-item>
                     <Form-item label="门店类型" :label-width="60" prop="shopType">
                         <Select v-model="searchForm.shopType" clearable style="min-width: 8vw">
-                            <Option v-for="item in apis.dictVal.shopType" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.shopType)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>

@@ -12,7 +12,7 @@
                         <Input v-model="searchForm.rolesName"></Input></FormItem>
                     <FormItem label="适用范围" :label-width="60" prop="useType">
                         <Select v-model="searchForm.useType" clearable style="min-width: 8vw">
-                            <Option v-for="item in apis.dictVal.roleUseType" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.roleUseType)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>
@@ -62,17 +62,7 @@
             minWidth:70,
             align: 'center',
             render: (h, params) => {
-              var val = params.row.useType
-              var res = ''
-              switch (val) {
-                case 1:
-                  res = '门店系统使用'
-                  break
-                case 2:
-                  res = '总部系统使用'
-                  break
-              }
-              return h('span', {}, res)
+              return this.$children[0].transDictValue(h, params, this.apis.dictType.roleUseType)
             }
           },
           {

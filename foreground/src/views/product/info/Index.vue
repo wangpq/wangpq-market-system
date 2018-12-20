@@ -15,14 +15,14 @@
                     </Form-item>
                     <Form-item label="审核状态" :label-width="60" prop="checkedStatus">
                         <Select class="checkedStatus" v-model="searchForm.checkedStatus" clearable>
-                            <Option v-for="item in apis.dictVal.checkedStatus" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.checkedStatus)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>
                     </Form-item>
                     <Form-item label="上下架" :label-width="60" prop="putawayStatus">
                         <Select class="checkedStatus" v-model="searchForm.putawayStatus" clearable>
-                            <Option v-for="item in apis.dictVal.putawayStatus" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.putawayStatus)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>

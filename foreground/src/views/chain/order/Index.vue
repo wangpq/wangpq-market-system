@@ -45,21 +45,21 @@
                     </Form-item>
                     <Form-item label="支付方式" :label-width="60" prop="payWay">
                         <Select class="selectCondition" v-model="searchForm.payWay" clearable>
-                            <Option v-for="item in apis.dictVal.payWay" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.payWay)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>
                     </Form-item>
                     <Form-item label="支付状态" :label-width="60" prop="payStatus">
                         <Select class="selectCondition" v-model="searchForm.payStatus" clearable>
-                            <Option v-for="item in apis.dictVal.payStatus" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.payStatus)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>
                     </Form-item>
                     <Form-item label="订单类型" :label-width="60" prop="orderType">
                         <Select class="selectCondition" v-model="searchForm.orderType" clearable>
-                            <Option v-for="item in apis.dictVal.orderType" :value="item.value" :key="item.value">
+                            <Option v-for="item in getDict(apis.dictType.orderType)" :value="item.value" :key="item.value">
                                 {{item.label }}
                             </Option>
                         </Select>

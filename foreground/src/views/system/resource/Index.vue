@@ -11,14 +11,14 @@
                                 <Input v-model="searchForm.content"></Input></FormItem>
                             <FormItem label="菜单类型" :label-width="60" prop="type">
                                 <Select v-model="searchForm.type" clearable style="min-width: 8vw">
-                                    <Option v-for="item in apis.dictVal.menuType" :value="item.value" :key="item.value">
+                                    <Option v-for="item in getDict(apis.dictType.menuType)" :value="item.value" :key="item.value">
                                         {{item.label }}
                                     </Option>
                                 </Select>
                             </FormItem>
                             <FormItem label="使用范围" :label-width="60" prop="useType">
                                 <Select v-model="searchForm.useType" clearable style="min-width: 8vw">
-                                    <Option v-for="item in apis.dictVal.menuUseType" :value="item.value"
+                                    <Option v-for="item in getDict(apis.dictType.menuUseType)" :value="item.value"
                                             :key="item.value">
                                         {{item.label }}
                                     </Option>

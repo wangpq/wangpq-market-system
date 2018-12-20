@@ -24,7 +24,7 @@
                 </FormItem>
                 <FormItem label="是否为督导" prop="orSupervision">
                     <Select v-model="userForm.orSupervision" clearable>
-                        <Option v-for="item in apis.dictVal.orSupervision" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.orSupervision)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
@@ -35,12 +35,20 @@
                 </FormItem>
                 <FormItem label="冻结标志" prop="isFreeze">
                     <Select v-model="userForm.isFreeze" clearable>
-                        <Option v-for="item in apis.dictVal.isFreeze" :value="item.value" :key="item.value">
+                        <Option v-for="item in getDict(apis.dictType.isFreeze)" :value="item.value" :key="item.value">
                             {{item.label }}
                         </Option>
                     </Select>
                 </FormItem>
-
+                <FormItem label="部门选择" prop="departmentId">
+                    <DepartTreeCombo
+                      :initOption="initOption"
+                      @selectNode="selectNode"
+                      ref="DepartTreeCombo"
+                      v-model="userForm.departmentId"
+                    >
+                    </DepartTreeCombo>
+                </FormItem>
             </Form>
             <div slot="footer">
                 <Button type="primary" @click="$parent.userFormInitOption.visible = false"
@@ -60,6 +68,7 @@
   import $http from '@/utils/httputils'
   import ChainSelectDialog from '@/components/common/ChainSelectDialog'
   import RoleSelectDialog from '@/components/common/RoleSelectDialog'
+  import DepartTreeCombo from '@/components/tree/DepartTreeCombo'
 
   export default {
 
@@ -101,6 +110,9 @@
               message: '联系手机格式不正确',
               trigger: 'change'
             },
+          ],
+          departmentId:[
+            {required: true, message: '部门不能为空', trigger: 'blur'}
           ]
         },
         userForm: {
@@ -113,6 +125,8 @@
           orSupervision: null,
           supervisionAreaIds: null,
           isFreeze: null,
+          departmentId:null,
+          departmentName:null
         },
         Extra: {
           chainNames: null,
@@ -147,7 +161,11 @@
         this.Extra.chainNames = names.join(',')
         callback(true)
       },
-
+        //选择 父级菜单之后回调方法
+      selectNode (data) {
+        this.userForm.departmentId = data.id;
+        this.userForm.departmentName = data.name;
+      },
       getInfo () {
         $http({
           path: this.apis.systemUser.view,
@@ -169,6 +187,7 @@
       handleSubmit () {
         this.$refs.userForm.validate((valid) => {
           console.log('valid:' + valid)
+          console.log(JSON.stringify(this.userForm))
           if (valid) {
             $http({
               path: this.apis.systemUser.update,
@@ -215,7 +234,8 @@
     },
     components: {
       ChainSelectDialog,
-      RoleSelectDialog
+      RoleSelectDialog,
+      DepartTreeCombo
     }
   }
 </script>

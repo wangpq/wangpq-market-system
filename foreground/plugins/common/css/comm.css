@@ -2,3 +2,7 @@
     word-break: break-all;
     word-wrap: break-word;
 }
+
+.tree_combo_select, .CateTreeCombo {
+    min-width: 8vw;
+}

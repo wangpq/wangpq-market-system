@@ -16,6 +16,33 @@ util.install = function (Vue) {
     return arr
   }
 
+  /**
+   * 对象数组去重
+   * @param array
+   * @returns {Array}
+   */
+  Vue.prototype.objDistinct = function (array) {
+    var uniques = [];
+    var stringify = {};
+    for (var i = 0; i < array.length; i++) {
+      var keys = Object.keys(array[i]);
+      keys.sort(function(a, b) {
+        return (Number(a) - Number(b));
+      });
+      var str = '';
+      for (var j = 0; j < keys.length; j++) {
+        str += JSON.stringify(keys[j]);
+        str += JSON.stringify(array[i][keys[j]]);
+      }
+      if (!stringify.hasOwnProperty(str)) {
+        uniques.push(array[i]);
+        stringify[str] = true;
+      }
+    }
+    uniques = uniques;
+    return uniques;
+  }
+
 
   /**
    *  清空对象中每一项值，不删除对象中的key
@@ -27,57 +54,93 @@ util.install = function (Vue) {
     })
   }
 
-  Vue.prototype.copyValue = function (source, target) {
+
+  /**
+   *  把 源数据中补位空的值，复制到目标数据
+   * @param source
+   * @param target
+   */
+  Vue.prototype.copyValue = function(source, target) {
     Object.keys(target).forEach(e => {
       console.log('【copyValue】【' + e + ':' + source[e] + '】')
-      if (source[e] !== null && source[e] !== '' && source[e] !== 'undefined') {
-        target[e] = source[e]
+      if (source[e] && source[e] !== null && source[e] !== '') {
+        console.log('【正在copyValue】【' + e + ':' + source[e] + '】')
+        if (target[e] && typeof target[e] === 'object' && typeof source[e] === 'object' && !Array.isArray(source[e])) {
+          this.copyValue(source[e], target[e])
+        } else {
+          target[e] = source[e]
+        }
       }
     })
   }
 
   /**
-   * 获取数据字典
-   * @param code  数据库查询字典类型 ex:'code_type'
-   * @param callback
+   * 对象深拷贝
+   * @param source
+   * @returns {*}
    */
-  Vue.prototype.getDictCall = function (code, callback) {
-    $http({
-      path: '/system/dict/list',
-      method: 'get',
-      data: {type: code}
-    }).then(response => {
-      let res = response.data
-      if (res.success) {
-        console.log(res.data)
-        callback(this.objToArray(res.data))
-      } else {
-        // this.$Message.error('获取数据字典失败！')
-      }
-    })
-  }
-
-  /**
-   * 获取数据字典
-   * @param code  数据库查询字典类型 ex:'code_type'
-   * @param tank  接收数据对象的key, key对应的对象是一个数组
-   */
-  Vue.prototype.getDict = function (code, tank) {
-    if (this.apis.dictVal[tank].length > 0) {
-      return
+  Vue.prototype.deepClone = function(source) {
+    if (!source && typeof source !== 'object') {
+      throw new Error('方法[deepClone]  传入参数不是对象')
     }
-    $http({
-      path: '/system/dict/list',
-      method: 'get',
-      data: {type: code}
-    }).then(response => {
-      let res = response.data
-      if (res.success) {
-        this.apis.dictVal[tank] = this.objToArray(res.data)
+    const targetObj = source.constructor === Array ? [] : {}
+    Object.keys(source).forEach(keys => {
+      if (source[keys] && typeof source[keys] === 'object') {
+        targetObj[keys] = this.deepClone(source[keys])
       } else {
-        // this.$Message.error('获取数据字典失败！')
+        targetObj[keys] = source[keys]
       }
     })
+    return targetObj
+  }
+
+
+  /**
+   * 获取数据字典
+   * @param code  数据库查询字典类型 ex:'code_type'
+   * @param value 该字典类型集合中对应的某项值
+   * return 对应字典名称
+   */
+  Vue.prototype.getDictValue = function(code, value) {
+    if (!value && value !== 0) {
+      return '未知'
+    }
+    const dictList = this.getDict(code)
+    let result = ''
+    for (const property in dictList) {
+      if (dictList[property].value === value) {
+        result = dictList[property].label
+        break
+      }
+    }
+    return result
+  }
+
+  /**
+   * 获取数据字典
+   * @param code  数据库查询字典类型 ex:'code_type'
+   * return 对应字典类型list
+   */
+  Vue.prototype.getDict = function(code) {
+    let dictStr = sessionStorage.getItem(code)
+    if (!dictStr) {
+      $http({
+        path: '/system/dict/list',
+        method: 'get',
+        data: {type: code}
+      }).then(response => {
+        const rep = response.data
+        if (rep.success) {
+          const dictList = rep.data
+          sessionStorage.setItem(code, JSON.stringify(dictList))
+          dictStr = JSON.stringify(dictList)
+        } else {
+          console.log('获取数据字典失败！')
+          return []
+        }
+      })
+    }
+    return this.objToArray(JSON.parse(dictStr))
   }
 
   /**
@@ -90,7 +153,7 @@ util.install = function (Vue) {
     if (!str){
       return str
     }
-    var result
+    let result
     result = str.replace(/(^\s+)|(\s+$)/g, '')
     if (isAll) {
       result = result.replace(/\s/g, '')

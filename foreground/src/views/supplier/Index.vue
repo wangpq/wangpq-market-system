@@ -12,7 +12,7 @@
                     </Form-item>
                     <Form-item label="经营方式" :label-width="60" prop="businessWay">
                         <Select v-model="searchForm.businessWay" clearable style="width: 8vw">
-                            <Option v-for="item in apis.dictVal.supplierBusinessWay" :value="item.value"
+                            <Option v-for="item in getDict(apis.dictType.supplierBusinessWay)" :value="item.value"
                                     :key="item.value">
                                 {{item.label }}
                             </Option>

@@ -69,8 +69,6 @@
     },
     data () {
       return {
-
-        dictList: [],
         formRules: {
           label: [
             {required: true, message: '标签名不能为空', trigger: 'blur'}
@@ -101,7 +99,6 @@
 
       init () {
         this.reset()
-        this.getSelectList()
         if (this.initOption.action !== 'add') {
           this.getInfo()
         }
@@ -111,11 +108,8 @@
         this.dictForm.parentName = option.label.trim()
       },
 
-      getSelectList () {
-        var $this = this
-        $this.getDictCall('', function (res) {
-          $this.dictList = res
-        })
+      dictList () {
+        return this.getDict('')
       },
 
       getInfo () {

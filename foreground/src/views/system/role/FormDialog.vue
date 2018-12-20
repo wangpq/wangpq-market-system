@@ -15,7 +15,7 @@
                 <Input v-model="roleForm.rolesName"></Input></FormItem>
             <FormItem label="适用范围" prop="useType">
                 <Select v-model="roleForm.useType" clearable>
-                    <Option v-for="item in apis.dictVal.roleUseType" :value="item.value" :key="item.value">
+                    <Option v-for="item in getDict(apis.dictType.roleUseType)" :value="item.value" :key="item.value">
                         {{item.label }}
                     </Option>
                 </Select>

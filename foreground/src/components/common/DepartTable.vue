@@ -3,9 +3,10 @@
         <Card>
             <div class="search">
                 <Form
-                        ref="tableSearchForm"
-                        :model="searchForm"
-                        inline>
+                  ref="tableSearchForm"
+                  :model="searchForm"
+                  inline
+                >
                     <slot name="search"></slot>
                 </Form>
                 <Row type="flex" justify="center" v-if="hasSearch">
@@ -14,7 +15,7 @@
                             <Button type="primary" @click="query" icon="md-search">查询</Button>
                         </Form-item>
                         <Form-item>
-                            <Button type="warning" @click="reset" class="page-reset" icon="md-refresh">重置</Button>
+                            <Button type="warning" @click="reset" icon="md-refresh">重置</Button>
                         </Form-item>
                     </Form>
                 </Row>
@@ -31,25 +32,28 @@
                 </Col>
             </Row>
             <Row type="flex" justify="center">
-
                 <Col span="24">
                     <Table
-                            ref="dataTable"
-                            :columns="columns"
-                            :data="tableData"
-                            :border="border"
-                            :stripe="stripe"
-                            :show-header="showHeader"
-                            :size="size"
-                            :context="this.$parent"
-                            @on-row-click="rowClick"
-                            @on-sort-change="sortTable"></Table>
+                      ref="dataTable"
+                      class="menuTable"
+                      :columns="columns"
+                      :data="tableData"
+                      :border="border"
+                      :stripe="stripe"
+                      :show-header="showHeader"
+                      :size="size"
+                      :context="this.$parent"
+                      @on-row-click="rowClick"
+                      @on-sort-change="sortTable"
+                    >
+                    </Table>
                     <MyLoading size="large" :show="loading"></MyLoading>
                 </Col>
             </Row>
+            <!--
             <Row type="flex" justify="center" class="pagination" :style="hiddenPage">
                 <Col span="24">
-                    <div :style="pageFloat">
+                    <div>
                         <Page
                                 :current="pageIndex"
                                 :page-size-opts="pageSizes"
@@ -63,6 +67,7 @@
                     </div>
                 </Col>
             </Row>
+            -->
         </Card>
     </div>
 </template>
@@ -74,10 +79,6 @@
   export default {
     name: 'dataTable',
     props: {
-      // 元数据
-      source : {
-        type: Array
-      },
       url: {
         type: String
       },
@@ -124,15 +125,10 @@
         default: () => {
           return {}
         }
-      },
-      pageFloat: {
-        type: String,
-        default: 'float: right'
-      },
+      }
     },
     data () {
       return {
-        sourceData: this.source,
         tableData: [],
         loading: true,
         pageSizes: [10, 20, 30],
@@ -143,42 +139,20 @@
         menuId: null,
       }
     },
-    mounted () {  
-      if(this.isLoadDataNow){
-        this.autoGetPageList();
-      }else{
-        this.loading = false;
-      }      
-  
+    mounted () {
+      this.$nextTick(() => {
+        //判断是否立即加载数据
+        if (!this.isLoadDataNow) {
+          return
+        }
+        this.loadData()
+        if (this.isPage) {
+          this.noPage()
+        }
+      })
     },
     methods: {
-      refresh(){  
-        this.autoGetPageList();
-      },
-      autoPageIndex(){  
-        let pageCounts= Math.ceil(this.sourceData.length/this.limit)
-        if(this.pageIndex>pageCounts){
-          this.pageIndex=pageCounts;
-        }
-      },
-      autoGetPageList(){  
-        if(this.sourceData){  
-          this.loading = false;
-          if(this.sourceData.length>0){ 
-            this.autoPageIndex();
-            let start=(this.pageIndex-1)* this.limit;
-            let end=start+this.limit;
-            this.tableData = this.sourceData.slice(start, end);
-            this.totalPages = this.sourceData.length;
-          }else{
-            this.tableData = [];
-            this.totalPages = 0;
-            this.pageIndex=1;
-          }
-        }else{
-          this.loadData();
-        }
-      },
+
       handle (e) {
         var row = this.getSelectRow()
         eval('this.$parent.' + e + "(row)")
@@ -227,7 +201,6 @@
       },
       // load remote data
       loadData () {
-        this.tableData = []
         let params = this.params
         this.loading = true
         $http({
@@ -249,11 +222,51 @@
         })
       },
 
+      // transBtn (h, params, $this) {
+      //   var menuId = this.$route.query.menuId
+      //   let datas = this.menuBtnObj ? this.menuBtnObj[menuId] : []
+      //   console.log('权限按钮===' + JSON.stringify(datas))
+      //   console.log('参数===' + JSON.stringify(params.row))
+      //   if (datas.length === 0) {
+      //     params.column.width = 1
+      //     return
+      //   }
+      //   var btns = [];
+      //   datas.forEach(data => {
+      //
+      //     if (data.resCilck.indexOf('handleAdd') !== -1) {
+      //       this.addAuth = data
+      //       this.addAuthShow = true
+      //       return;
+      //     }
+      //
+      //     btns.push(h('Button', {
+      //       props: {
+      //         type: data.resId,
+      //         size: 'small'
+      //       },
+      //       style: {
+      //         marginRight: '5px'
+      //       },
+      //       on: {
+      //         click: () => {
+      //           eval('$this.' + data.resCilck + '(params.row)');
+      //         }
+      //       }
+      //     }, data.title))
+      //   })
+      //
+      //   if (btns.length === 0) {
+      //     params.column.width = 1
+      //   }
+      //   return h('div', btns)
+      // },
+
       //数据转换
       transformTableData (res) {
-        this.tableData = res.data.list
-        this.totalPages = res.data.total
-        this.pageIndex = res.data.pageIndex
+        this.tableData = res.data
+        this.totalPages = res.data.total || 0
+        this.pageIndex = res.data.pageIndex || 1
       },
 
       query () {
@@ -271,19 +284,17 @@
         }
       },
       clear () {
-        this.tableData = [];
-        this.pageIndex = 1;
-        this.totalPages = 0;
+        this.tableData = []
       },
       // change page size
       sizeChange (limit) {
         this.limit = limit
-        this.autoGetPageList()
+        this.loadData()
       },
       // change current page
-      pageChange (pageIndex) {  
+      pageChange (pageIndex) {
         this.pageIndex = pageIndex
-        this.autoGetPageList()
+        this.loadData()
       },
       // handle sort
       sortTable (column, key, order) {
@@ -292,7 +303,7 @@
     },
     computed: {
       // dynamic pagination query params
-      params () {
+      params: function () {
         let params = this.searchForm
         params.pageIndex = this.pageIndex
         params.limit = this.limit
@@ -308,14 +319,6 @@
         return this.$store.state.app.menusBtn[this.menuId] || []
       }
     },
-    watch: {
-      source (val){
-        this.sourceData=val;
-      },
-      tableData(val){
-        this.tableData=val;
-      }
-    },
     components: {
       MyLoading
     }
@@ -323,29 +326,43 @@
 </script>
 
 <style lang="scss">
-    .datatable {
+.datatable {
 
-        .function {
-            padding: 0 0 5px 10px;
-            /*line-height: 40px;*/
-            .handle-btn {
-                margin-right: 10px;
-            }
-        }
-        .search {
-            margin: 10px 0px 0px 10px;
-        }
-        .pagination {
-            margin: 10px 0px 0px 10px;
-        }
-        .ivu-table {
-            max-height: 64vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        .ivu-card-body {
-            max-height: 87vh;
-            overflow-y: auto;
+    .function {
+        padding: 0 0 5px 10px;
+        /*line-height: 40px;*/
+        .handle-btn {
+            margin-right: 10px;
         }
     }
+    .search {
+        margin: 10px 0px 0px 10px;
+    }
+    .pagination {
+        margin: 10px 0px 0px 10px;
+    }
+    .ivu-table {
+        max-height: 64vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    .ivu-card-body {
+        max-height: 87vh;
+        overflow-y: auto;
+    }
+}
+
+.menuTable {
+  .ivu-table-cell {
+      padding-left: 0px !important;
+  }
+  .ivu-table-expanded-cell {
+      padding: 0 !important;
+  }
+  .ivu-table-wrapper {
+      border: 0 !important;
+  }
+}
+
+
 </style>
