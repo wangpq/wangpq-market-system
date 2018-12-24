@@ -56,8 +56,6 @@
       return {
         tableData: [],
         supplierList: [],
-        tempNumber: '',
-        tempPrice: '',
         columns: [
           {
             title: '序号',
@@ -95,8 +93,7 @@
             sortable: true,
             align: 'center',
             render: (h, params) => {
-              this.tempPrice = params.row.price
-              let $this = this
+              let key = params.column.key
               return h('div', [
                 h('InputNumber', {
                   props: {
@@ -107,18 +104,11 @@
                     style: "font-size: 16px;font-weight: bolder;",
                   },
                   on: {
-                    'on-blur': function () {
-                      console.log("$this.tempPrice===="+$this.tempPrice)
-                      $this.tableData[params.index].price = $this.tempPrice
-                    },
-                    'on-change': function (val) {
-                      if (!val){
-                        $this.tableData[params.index].price = null
-                      }
-                      $this.tempPrice = val
-                    },
                     input: function (val) {
-                      $this.tempPrice = val
+                      params.row[key] = val
+                    },
+                    'on-blur': () => {
+                      this.tableData.splice(params.index, 1, params.row)
                     }
                   },
                 })
@@ -132,8 +122,7 @@
             width: 120,
             align: 'center',
             render: (h, params) => {
-              this.tempNumber = params.row.number
-              let $this = this
+              let key = params.column.key
               return h('div', [
                 h('InputNumber', {
                   props: {
@@ -144,17 +133,11 @@
                     style: "font-size: 16px;font-weight: bolder;",
                   },
                   on: {
-                    'on-blur': function () {
-                        $this.tableData[params.index].number = $this.tempNumber
-                    },
-                    'on-change': function (val) {
-                      if (!val){
-                        $this.tableData[params.index].number = null
-                      }
-                      $this.tempNumber = val
-                    },
                     input: function (val) {
-                      $this.tempNumber = val
+                      params.row[key] = val
+                    },
+                    'on-blur': () => {
+                      this.tableData.splice(params.index, 1, params.row)
                     }
                   },
                 })
@@ -322,7 +305,12 @@
         }).then(response => {
           let res = response.data
           if (res.success) {
-            this.$Message.success(status === 1 ? '提交成功！' : '存稿成功！')
+            this.tableData = []
+            this.$Notice.success({
+              title: '采购',
+              desc: (status === 1 ? '提交成功' : '存稿成功') + ',请移步采购列表查看！'
+            })
+            this.$Message.success()
           } else {
             this.$Modal.error({
               title: '提示',
@@ -353,7 +341,7 @@
             res = false
             return false
           }
-          if ((e.number+"").indexOf(".") > 0) {
+          if ((e.number + "").indexOf(".") > 0) {
             this.$Message.warning("商品【" + e.productName + "】数量必须是整数!");
             res = false
             return false

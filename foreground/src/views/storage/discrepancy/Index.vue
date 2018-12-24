@@ -35,6 +35,7 @@
 <script>
   import DataTable from '@/components/common/DataTable'
   import FormDialog from '@/views/storage/discrepancy/FormDialog'
+  import {formatDate} from 'iview/src/components/date-picker/util'
 
   import $http from '@/utils/httputils'
 
@@ -47,20 +48,20 @@
           {
             title: '序号',
             type: 'selection',
-            width: 80,
+            width: 50,
             align: 'center'
           },
           {
-            title: '仓库编号',
-            key: 'warehouseId',
-            sortable:true,
-            minWidth:30,
+            title: '编号',
+            key: 'id',
+            // sortable:true,
+            minWidth:60,
             align: 'center'
           },
           {
             title: '仓库名称',
             key: 'warehouseName',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
             align: 'center'
           },
@@ -69,18 +70,54 @@
             key: 'type',
             sortable:true,
             minWidth:70,
+            align: 'center',
+            render: (h, params) => {
+              var val = params.row.type
+              var res = ''
+              switch (val) {
+                case 1:
+                  res = '商品报损'
+                  break
+                case 2:
+                  res = '商品报溢'
+                  break
+                case 3:
+                  res = '客户销售退货入库'
+                  break
+                case 4:
+                  res = '采购退货出库'
+                  break
+                case 5:
+                  res = '门店退货入库'
+                  break
+              }
+              return h('span', {}, res)
+            }
+          },
+          {
+            title: '商品条码',
+            key: 'productNo',
+            // sortable:true,
+            minWidth:70,
+            align: 'center'
+          },
+          {
+            title: '商品名称',
+            key: 'productName',
+            // sortable:true,
+            minWidth:70,
             align: 'center'
           },
           {
             title: '规格',
             key: 'specifications',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
             align: 'center'
           },{
             title: '单位',
             key: 'unit',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
             align: 'center'
           },{
@@ -92,19 +129,23 @@
           }, {
             title: '生产日期',
             key: 'produceTime',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
-            align: 'center'
+            align: 'center',
+            render: (h,params)=>{
+              return h('div',
+                formatDate(new Date(params.row.produceTime),'yyyy-MM-dd'))
+            }
           },{
             title: '业务员',
             key: 'counterman',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
             align: 'center'
           },{
             title: '客户',
             key: 'customer',
-            sortable:true,
+            // sortable:true,
             minWidth:70,
             align: 'center'
           },

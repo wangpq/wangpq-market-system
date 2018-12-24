@@ -633,7 +633,7 @@ export default {
 
       // 获取商品名称价格等信息  /product/sales
 
-      this.$ajax.get(api.querySales, {
+      this.$ajax.get(api.queryChainSales, {
         params: {
           code : this.barcode.trim(), // 条形码
           memberId : memberId // 会员Id
@@ -1890,7 +1890,7 @@ export default {
         return;
       }
       this.payOnlineDialogVisible=true;
-      this.payOnlineDialogPayWay="云闪付";  
+      this.payOnlineDialogPayWay="云闪付";
       this.payOnlineDialogCode ="";
       this.payOnlinePlaceholder="反扫云闪付条码";
 

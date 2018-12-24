@@ -1,4 +1,5 @@
 <template>
+  <div>
     <Modal id="discrepancyFormDialog"
            v-model="initOption.visible"
            :mask-closable="false">
@@ -6,40 +7,51 @@
             <Icon type="information-circled"></Icon>
             <span>{{initOption.title}}</span>
         </p>
-        <Form ref="discrepancyForm"
+      <Form ref="discrepancyForm"
               :model="discrepancyForm"
               :rules="formRules"
               :label-width="90">
 
-          <Form-item label="差异类型"  prop="orderType">
-            <Select class="selectCondition" v-model="discrepancyForm.type" clearable>
+          <Form-item label="差异类型"  prop="type">
+            <Select class="selectCondition" v-model="discrepancyForm.type" clearable >
               <Option v-for="item in getDict(apis.dictType.stockDiscrepancyType)" :value="item.value" :key="item.value">
                 {{item.label }}
               </Option>
             </Select>
           </Form-item>
 
-            <FormItem label="仓库" prop="warehouseId">
-                <Input v-model="discrepancyForm.warehouseId"></Input>
+            <FormItem label="仓库" prop="warehouseId" >
+                <Select class="selectCondition"  v-model="discrepancyForm.warehouseId" clearable  :label-in-value="true"  @on-change="v=>{setOption(v,'type')}" >
+                  <Option v-for="item in selectList" :value="item.id" :key="item.id"  v-if="item.id == discrepancyForm.warehouseId" selected="true">
+                    {{item.name }},{{item.id == discrepancyForm.warehouseId}},{{item.id}},{{discrepancyForm.warehouseId}},{{item.id - discrepancyForm.warehouseId}}
+                  </Option>
+                  <Option :value="item.id" :key="item.id"  v-else>
+                    {{item.name }}
+                  </Option>
+                </Select>
+            </FormItem>
+            <FormItem label="商品条码" prop="productNo">
+              <input class="ivu-input" v-model="discrepancyForm.productNo"
+                     v-on:dblclick="initSelectProOption.visible=true" placeholder="双击选择商品" readonly></input>
             </FormItem>
 
-            <FormItem label="商品条码" prop="productNo">
-            <Input v-model="discrepancyForm.productNo"></Input></FormItem>
-
             <FormItem label="商品名称" prop="productName">
-            <Input v-model="discrepancyForm.productName"></Input></FormItem>
+            <Input v-model="discrepancyForm.productName" readonly></Input></FormItem>
 
             <FormItem label="规格" prop="specifications">
-                <Input v-model="discrepancyForm.specifications"></Input></FormItem>
+                <Input v-model="discrepancyForm.specifications" readonly></Input></FormItem>
 
             <FormItem label="单位" prop="unit">
-                <Input v-model="discrepancyForm.unit"></Input></FormItem>
+                <Input v-model="discrepancyForm.unit" readonly></Input></FormItem>
 
             <FormItem label="数量" prop="number">
                 <Input v-model="discrepancyForm.number"></Input></FormItem>
 
             <FormItem label="生产日期" prop="produceTime">
-              <Input v-model="discrepancyForm.produceTime"></Input></FormItem>
+              <DatePicker type="date" v-model="discrepancyForm.produceTime"
+                          format="yyyy-MM-dd" placeholder="选择生产日期"
+                          style="width: 200px" @on-change="onActDateChange"></DatePicker>
+            </FormItem>
 
         </Form>
         <div slot="footer">
@@ -52,10 +64,13 @@
             <Button type="error" @click="reset" v-if="initOption.action === 'add'">重置</Button>
         </div>
     </Modal>
+    <ProductSpecSelectDialog :initOption="initSelectProOption"></ProductSpecSelectDialog>
+  </div>
 </template>
 <script>
   import $http from '@/utils/httputils'
-  import SelectCombo from '@/components/common/SelectCombo'
+  // import SelectCombo from '@/components/common/SelectCombo'
+  import ProductSpecSelectDialog from '@/components/common/ProductSpecSelectDialog'
 
   //this.$refs.regions.getRegions();
   export default {
@@ -85,17 +100,17 @@
 
         formRules: {
           warehouseId: [
-            {required: true, message: '仓库不能为空', trigger: 'blur'}
+            {type: 'number',required: true, message: '仓库不能为空', trigger: 'change'}
           ],
           productNo: [
             {required: true, message: '商品条码不能为空', trigger: 'blur'}
           ],
-          specifications:[
+          /*specifications:[
             {required: true, message: '规格不能为空', trigger: 'blur'}
           ],
           unit: [
             {required: true, message: '单位不能为空', trigger: 'blur'}
-          ],
+          ],*/
           number: [
             {required: true, message: '数量不能为空', trigger: 'blur'}
           ]
@@ -107,36 +122,70 @@
           id: this.initOption.id,
           type:null,
           warehouseId:null,
+          warehouseName:null,
+          productId:null,
           productNo: null,
           productName: null,
           specifications:null,
           unit: null,
           number: null,
           produceTime:null
-        }
+        },
+        initSelectProOption: {
+          visible: false,
+          title: '选择商品'
+        },
+        selectList:[]
       }
     },
+    // created(){
+    //   //如果没有这句代码，select中初始化会是空白的，默认选中就无法实现
+    //   this.discrepancyForm.warehouseId = this.selectList[0].warehouseId;
+    // },
     methods: {
 
       init () {
+        this.getWareHouseList();
         this.reset()
         if (this.initOption.action !== 'add') {
-          this.getInfo()
+          this.getInfo();
         }
+
       },
 
       setDict () {
         // this.getDict('shop_type', 'shopType')
         // this.getDict('deliver_price_type', 'deliverPriceType')
       },
-
-      //选择 父级菜单之后回调方法
-      selectAreaNode (opt) {
-        this.discrepancyForm.ofAreaId = opt.id
-        this.discrepancyForm.country = opt.title
-        console.log('选择父级菜单之后回调值：' + opt.id + opt.title)
+      onActDateChange(date_1){
+        this.discrepancyForm.produceTime=date_1;
       },
-
+      //选择 父级菜单之后回调方法
+      setOption (value,type) {
+        if(value){
+          this.discrepancyForm.warehouseId = value.value
+          this.discrepancyForm.warehouseName = value.label
+          console.log("value.value:"+value.value)
+        }
+      },
+      getWareHouseList(){
+        $http({
+          path: this.apis.warehouseManage.list,
+          method: 'post',
+          data: {}
+        }).then(response => {
+          let res = response.data
+          if (res.success) {
+            this.selectList=res.data.list
+            console.log(this.selectList)
+          } else {
+            this.$Modal.error({
+              title: '提示',
+              content: res.message
+            })
+          }
+        })
+      },
       getInfo () {
         $http({
           path: this.apis.discrepancyManage.view,
@@ -146,7 +195,9 @@
           var res = response.data
           if (res.success) {
             this.copyValue(res.data, this.discrepancyForm)
-            // this.$refs.AreaTreeCombo.setNodeName(this.discrepancyForm.country)
+            this.discrepancyForm.warehouseId=res.data.warehouseId;
+            this.discrepancyForm.warehouseName=res.data.warehouseName;
+            console.log("id:"+this.discrepancyForm.warehouseId+",name:"+this.discrepancyForm.warehouseName)
           } else {
             this.$Modal.error({
               title: '提示',
@@ -204,7 +255,8 @@
       this.setDict()
     },
     components: {
-      SelectCombo
+      // SelectCombo,
+      ProductSpecSelectDialog
     }
   }
 </script>

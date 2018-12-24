@@ -10,6 +10,7 @@ import SaleOrder from '@/pages/order/SaleOrder'
 import SaleProduct from '@/pages/order/SaleProduct'
 import BackHome from '@/pages/BackHome'
 import GoodSearch from '@/pages/goods/GoodSearch'
+import ChainProduct from '@/pages/goods/ChainProduct'
 import ChainUser from  '@/pages/chain/ChainUser'
 import ChainInfo from '@/pages/system/ChainInfo'
 import BalanceAccount from '@/pages/system/BalanceAccount'
@@ -38,37 +39,31 @@ export default new Router({
       path: '/backend',
       name: 'BackEnd',
       component: BackEnd,
-      children: [
-        // 后台首页
-        {
+      children: [{// 后台首页
           path: '/',
           name: 'BackHome',
           component: BackHome
-        },
-        // 商品管理---商品查询
-        {
+        }, {// 商品管理---商品查询
           path: 'product',
           name: 'GoodSearch',
           component: GoodSearch
-        },
-        // 会员管理---会员信息管理
-        {
+        }, {
+          path:'chain-product',
+          name:'ChainProduct',
+          component:ChainProduct
+       },{// 会员管理---会员信息管理
           path: 'member',
           name: 'MemberInfo',
           component: MemberInfo
-        },
-        // 系统管理---结算账号
-        {
+        }, {// 系统管理---结算账号
           path: 'pay-acount',
           name: 'BalanceAccount',
           component: BalanceAccount
-        },
-        {
+        }, {
           path: 'order',
           name: 'SaleOrder',
           component: SaleOrder
-        },
-        {
+        }, {
           path: 'order-product',
           name: 'SaleProduct',
           component: SaleProduct
@@ -80,21 +75,15 @@ export default new Router({
            path:'chain-info',
            name: 'ChainInfo',
            component: ChainInfo
-        },
-        // 门店订货单列表
-        {
+        }, { // 门店订货单列表
           path:'store-order-list',
           name: 'StoreOrderList',
           component: StoreOrderList
-        },
-        // 商品入库
-        {
+        }, {// 商品入库
           path:'product-storage',
           name: 'ProductStorage',
           component: ProductStorage
-        },
-        // 商品库存
-        {
+        }, {// 商品库存
           path:'stock-list',
           name: 'StockList',
           component: StockList

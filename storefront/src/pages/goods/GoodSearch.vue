@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="header">
-     
+
         <el-select size="small" v-model="prdTypeVal" placeholder="全部"  @change="onPrdTypeChange" style="width:1.6rem;margin-right:8px;">
           <el-option
             v-for="item in prdTypeArr"
@@ -38,11 +38,13 @@
         <el-table-column
           prop="productName"
           align="center"
+          min-width="160"
           label="商品名称">
         </el-table-column>
         <el-table-column
           prop="productNo"
           align="center"
+          min-width="120"
           label="商品货号">
         </el-table-column>
         <el-table-column
@@ -91,7 +93,7 @@
           prop="shelfLife"
           align="center"
           label="保质期">
-        </el-table-column>   
+        </el-table-column>
 
         <el-table-column
           prop="orDiscount"
@@ -168,11 +170,11 @@ export default {
         {
           value: '全部',
           label: '全部'
-        }, 
+        },
         {
           value: '已上架',
           label: '已上架'
-        }, 
+        },
         {
           value: '已下架',
           label: '已下架'
@@ -183,11 +185,11 @@ export default {
         {
           value: '全部',
           label: '全部'
-        }, 
+        },
         {
           value: '商品编码',
           label: '商品编码'
-        }, 
+        },
         {
           value: '商品名称',
           label: '商品名称'
@@ -204,7 +206,7 @@ export default {
       // 表格数据（目前要渲染的商品数据）
       tableData: [],
       // 表格数据分页索引值，默认从1开始
-      pageIndex : 1 , 
+      pageIndex : 1 ,
       // 表格数据分页数，默认0
       pageTotal : 0,
       // 表格数据条数
@@ -214,11 +216,11 @@ export default {
       // 访问ajax的tag
       queryAjaxTag : "all",
       // 分页显示
-      pagerVisible : true 
+      pagerVisible : true
     }
   },
   mounted  () {
-     
+
   },
   computed : {
   },
@@ -227,7 +229,7 @@ export default {
     this.queryPrdInfos();
   },
   methods : {
-    onPrdTypeChange: function(val){ 
+    onPrdTypeChange: function(val){
       this.tableData=[];
       switch(val){
         case "全部":
@@ -241,7 +243,7 @@ export default {
       }
       this.queryPrdInfos(this.queryAjaxTag);
     },
-    onPrdSortTypeChange(val){ 
+    onPrdSortTypeChange(val){
       this.tableData=[];
       if(val==="全部"){
         this.pagerVisible=false;
@@ -253,34 +255,34 @@ export default {
       // 商品编码(货号)
       else if(val==="商品编码"){
         this.pagerVisible=false;
-        this.queryAjaxTag="code"; 
+        this.queryAjaxTag="code";
         this.pageIndex =1;
         this.placeholder="请输入商品编码";
       }
       // 商品名称
       else if(val==="商品名称"){
         this.pagerVisible=false;
-        this.queryAjaxTag="name";  
+        this.queryAjaxTag="name";
         this.pageIndex =1;
         this.placeholder="请输入商品名称";
       }
       // 商品分类
       else{
-        this.pagerVisible=false; 
-        this.queryAjaxTag="type";  
+        this.pagerVisible=false;
+        this.queryAjaxTag="type";
         this.pageIndex =1;
         this.placeholder="请输入商品分类";
       }
     },
-    onsearchKeyWordBtnTap(){ 
-      
+    onsearchKeyWordBtnTap(){
+
       if(trim(this.searchKeyWord)!==""){
         this.queryPrdInfos();
       }else{
         this.searchKeyWord="";
       }
     },
-    queryPrdInfos(){ 
+    queryPrdInfos(){
       let tag=this.queryAjaxTag;
 
       const params={};
@@ -296,46 +298,46 @@ export default {
       else if(tag==="added"){
         params.limit=this.pageSize;
         params.pageIndex=this.pageIndex;
-        params.putawayStatus=1 ;    
+        params.putawayStatus=1 ;
       }
       // 下架
       else if(tag==="outOfStock"){
         params.limit=this.pageSize;
         params.pageIndex=this.pageIndex;
-        params.putawayStatus=2;   
+        params.putawayStatus=2;
       }
       // 商品编码(货号)
       else if(tag==="code"){
         params.limit=this.pageSize;
         params.pageIndex=this.pageIndex;
-        params.productNo=this.searchKeyWord;     
+        params.productNo=this.searchKeyWord;
       }
        // 商品名称
       else if(tag==="name"){
         params.limit=this.pageSize;
         params.pageIndex=this.pageIndex;
-        params.productName=this.searchKeyWord;   
+        params.productName=this.searchKeyWord;
       }
-      // 商品分类 
+      // 商品分类
       else{
         params.limit=this.pageSize;
         params.pageIndex=this.pageIndex;
-        params.productCateName=this.searchKeyWord;   
+        params.productCateName=this.searchKeyWord;
       }
 
       this.$ajax.post(api.queryPrdPage, params)
-      .then( (response) =>{ 
+      .then( (response) =>{
         timeOutFn(this,response,()=>{
           let res=response.data;
           if(res.success && res.data && res.data.list && res.data.list.length>0){
             this.tableData=this.convertTableData(res.data.list);
             this.tableDataLenth=res.data.total;
             this.pageIndex=res.data.pageIndex;
-            this.pagerVisible=true; 
+            this.pagerVisible=true;
           }
         })
       })
-      .catch( (error)=> {  
+      .catch( (error)=> {
       });
     },
     convertTableData(arr){
@@ -382,7 +384,7 @@ export default {
       this.pageSize=val;
       this.handleCurrentChange();
     },
-    handleCurrentChange(val) { 
+    handleCurrentChange(val) {
       //console.log(`当前页: ${val}`);
       this.pageIndex=val;
       this.queryPrdInfos()
@@ -412,12 +414,12 @@ export default {
   overflow:hidden;
   position: relative;
 }
-.el-table td, 
+.el-table td,
 .el-table th.is-leaf{
   border-bottom-color: #ccc;
 }
 .my-pager{
-  position: absolute;
+  position: fixed;
   left: 34%;
   right: 32%;
   display: flex;

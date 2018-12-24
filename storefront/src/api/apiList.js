@@ -15,10 +15,16 @@ export default {
   querySearch :  `${host}/product/search`,
   // 通过条码或者名称获取商品信息(收银)
   querySales :  `${host}/product/sales`,
+  // 通过条码或者名称获取商品信息(收银)
+  queryChainSales :  `${host}/chain/product/sellGoods`,
   // 获取转换商品信息
   queryPrdConvert :  `${host}/product/convert`,
   // 分页获取商品
   queryPrdPage :  `${host}/product/page`,
+  //分页获取门店商品
+  queryChainProductPage:'chain/product/page',
+  //修改门店商品使用标志
+  queryChainProductEnable:'chain/product/enabled',
 
   // 创建订单
   queryCreateOrder :  `${host}/chain/order/create`,
@@ -103,7 +109,7 @@ export default {
   chainOrderPrice : "/chain/call/price/list",
 
   // 分页查询订货单
-  storeOrderList : "call/page", 
+  storeOrderList : "call/page",
 
   // 分页获取订货单商品
   orderProduct :  "/call/products",

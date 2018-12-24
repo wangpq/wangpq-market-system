@@ -14,7 +14,7 @@
                         <Input type="text" v-model="searchForm.warehouseName"></Input>
                     </Form-item>
                     <Form-item label="供应商" :label-width="60" prop="supplierName">
-                        <Select class="tree_combo_select" v-model="searchForm.supplierId" placeholder="==供应商==" >
+                        <Select class="tree_combo_select" v-model="searchForm.supplierId" placeholder="==供应商==">
                             <Option v-for="item in supplierList" :value="item.id" :key="item.id">
                                 {{ item.name }}
                             </Option>
@@ -63,7 +63,6 @@
     name: 'purchaseIndex',
     data () {
       return {
-
         columns: [
           {
             title: '序号',
@@ -113,7 +112,7 @@
             minWidth: 110,
             align: 'center',
             render: (h, params) => {
-              return this.$children[0].getDictValue(h, params, this.apis.dictType.purchaseAuditStatus)
+              return this.$children[0].transDictValue(h, params, this.apis.dictType.purchaseAuditStatus)
             }
           },
           {
@@ -151,7 +150,7 @@
             minWidth: 100,
             align: 'center',
             render: (h, params) => {
-              return this.$children[0].getDictValue(h, params, this.apis.dictType.purchaseOrSettlement)
+              return this.$children[0].transDictValue(h, params, this.apis.dictType.purchaseOrSettlement)
             }
           },
           {
@@ -161,7 +160,7 @@
             minWidth: 110,
             align: 'center',
             render: (h, params) => {
-              return this.$children[0].getDictValue(h, params, this.apis.dictType.purchaseSettlementType)
+              return this.$children[0].transDictValue(h, params, this.apis.dictType.purchaseSettlementType)
             }
           },
           {
@@ -171,7 +170,7 @@
             minWidth: 110,
             align: 'center',
             render: (h, params) => {
-              return this.$children[0].getDictValue(h, params, this.apis.dictType.payWay)
+              return this.$children[0].transDictValue(h, params, this.apis.dictType.payWay)
             }
           },
           {
@@ -240,7 +239,7 @@
         this.$children[1].init()
       },
       handleDelete (row) {
-        if (!(row = this.$children[0].isRightSelectForBatch(row,'no'))) {return}
+        if (!(row = this.$children[0].isRightSelectForBatch(row, 'no'))) {return}
         this.$Modal.confirm({
           title: '请确认',
           content: '确定删除【' + row.name + '】采购订单？',

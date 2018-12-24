@@ -75,7 +75,7 @@
     name: 'dataTable',
     props: {
       // 元数据
-      source : {
+      source: {
         type: Array
       },
       url: {
@@ -143,39 +143,39 @@
         menuId: null,
       }
     },
-    mounted () {  
-      if(this.isLoadDataNow){
+    mounted () {
+      if (this.isLoadDataNow) {
         this.autoGetPageList();
-      }else{
+      } else {
         this.loading = false;
-      }      
-  
+      }
+
     },
     methods: {
-      refresh(){  
+      refresh () {
         this.autoGetPageList();
       },
-      autoPageIndex(){  
-        let pageCounts= Math.ceil(this.sourceData.length/this.limit)
-        if(this.pageIndex>pageCounts){
-          this.pageIndex=pageCounts;
+      autoPageIndex () {
+        let pageCounts = Math.ceil(this.source.length / this.limit)
+        if (this.pageIndex > pageCounts) {
+          this.pageIndex = pageCounts;
         }
       },
-      autoGetPageList(){  
-        if(this.sourceData){  
+      autoGetPageList () {
+        if (this.sourceData) {
           this.loading = false;
-          if(this.sourceData.length>0){ 
+          if (this.sourceData.length > 0) {
             this.autoPageIndex();
-            let start=(this.pageIndex-1)* this.limit;
-            let end=start+this.limit;
+            let start = (this.pageIndex - 1) * this.limit;
+            let end = start + this.limit;
             this.tableData = this.sourceData.slice(start, end);
             this.totalPages = this.sourceData.length;
-          }else{
+          } else {
             this.tableData = [];
             this.totalPages = 0;
-            this.pageIndex=1;
+            this.pageIndex = 1;
           }
-        }else{
+        } else {
           this.loadData();
         }
       },
@@ -249,6 +249,12 @@
         })
       },
 
+      transDictValue (h, params, type) {
+        const val = params.row[params.column.key]
+        const label = this.getDictValue(type, val)
+        return h('span', {}, label)
+      },
+
       //数据转换
       transformTableData (res) {
         this.tableData = res.data.list
@@ -281,7 +287,7 @@
         this.autoGetPageList()
       },
       // change current page
-      pageChange (pageIndex) {  
+      pageChange (pageIndex) {
         this.pageIndex = pageIndex
         this.autoGetPageList()
       },
@@ -309,11 +315,11 @@
       }
     },
     watch: {
-      source (val){
-        this.sourceData=val;
+      source (val) {
+        this.sourceData = val;
       },
-      tableData(val){
-        this.tableData=val;
+      tableData (val) {
+        this.tableData = val;
       }
     },
     components: {

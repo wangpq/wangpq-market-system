@@ -1,5 +1,5 @@
 let apis = {
-  dict: { 
+  dict: {
     OR_DISCOUNT: 'test'
   },
   dictVal: {
@@ -272,6 +272,7 @@ let apis = {
   purchase: {
     get: '/purchase/page',
     view: '/purchase/getById',
+    detail: '/purchase/getDetail',
     save: '/purchase/save',
     draft: '/purchase/draft',
     update: '/purchase/update',
